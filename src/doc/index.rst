@@ -194,11 +194,6 @@ Keywords
 
 Artificial Intelligence (AI) agent, attestation, environment measurement, trusted environment, methodology, trusted execution environment (TEE).
 
-.. raw:: latex
-
-    \newpage
-    \osiacenternextsection
-
 Foreword
 --------
 
@@ -241,6 +236,15 @@ Note
     \let\addcontentsline\osiaorigaddcontentsline
     \sphinxtableofcontents
     \osiamainmatter
+    %% Clauses are \section under an unnumbered chapter, so LaTeX would print
+    %% them 0.1, 0.2, ...  Number them from 1, and restart the counter here:
+    %% the unnumbered front-matter subsections step it before this point.
+    \makeatletter
+    \renewcommand{\thesection}{\arabic{section}}
+    \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+    \renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+    \makeatother
+    \setcounter{section}{0}
 
 .. toctree::
     :maxdepth: 3

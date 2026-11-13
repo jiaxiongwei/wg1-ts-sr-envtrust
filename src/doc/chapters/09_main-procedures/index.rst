@@ -30,3 +30,7 @@ h) The dynamic trust decision procedure (9.9).
 .. include:: _attestation-lifecycle-management.rst
 .. include:: _timeliness-management.rst
 .. include:: _dynamic-trust-decision.rst
+
+.. raw:: latex
+
+    \setcounter{secnumdepth}{-1}
