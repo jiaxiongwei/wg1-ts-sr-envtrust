@@ -1,40 +1,77 @@
-# TIDA Specification Template
+# TS.sr-envtrust
 
-**See the template live:**
-📄 **[Web page](https://fg-tida.github.io/spec-template/)** ·
-📥 **[PDF](https://fg-tida.github.io/spec-template/specification.pdf)**
+**Security requirements for trusted environment measurement and attestation
+of AI agents**
 
-The pages you see there are produced by this repository — they double as the
-template's documentation, explaining and demonstrating how to write a spec.
+Proposed new Technical Specification of the Focus Group on Trust and Identity
+for humans and agentic AI (FG-TIDA), Working Group 1 (WG1). Status: **draft (V1)**.
 
-> **Starting a new specification?** Follow
-> **[WG-ONBOARDING.md](WG-ONBOARDING.md)**. Once your repo is created, replace
-> the text of this README with a short description of *your* specification
-> (what it is, its status, and a link to its published site).
+📄 **Web page:** https://jiaxiongwei.github.io/wg1-ts-sr-envtrust/
+📥 **PDF:** https://jiaxiongwei.github.io/wg1-ts-sr-envtrust/specification.pdf
 
----
+## What this document is
 
-A specification for the FG-TIDA working groups, authored with the shared TIDA
-template: one source that builds a modern web page and a print-ready PDF, with
-support for diagrams and auto-generated API references.
+AI agents increasingly run outside static environments, on distributed
+platforms such as cloud, edge and confidential-computing enclaves. Existing
+work verifies **who** an agent is and **what** it intends to do, but not
+**where** it is running — the environment dimension of the trust triad is
+missing. Without it, an authorisation decision cannot distinguish an agent
+executing inside a verified enclave from one reporting from a compromised host.
 
-## Quick start
+This Technical Specification fills that gap. It specifies the concepts and the
+security framework for trusted environment measurement and attestation of AI
+agents, the security risks that arise when the environment is unverified, the
+security requirements that answer them, and the procedures and methodologies
+that implement measurement, attestation generation and exchange, verification,
+delegated verification, lifecycle and timeliness management, and dynamic trust
+decision. Appendix II provides a JSON reference implementation of the
+measurement data model.
 
-1. In your Working Group's GitHub organization (`fg-tida-wg<n>`), click **Use this
-   template → Create a new repository**, named `wg<n>-<acronym>-<spec-name>`.
-2. In the new repo: **Settings → Pages → Source: GitHub Actions**.
-3. Edit the content under `src/doc/` — replace the `<placeholders>` and the
-   example text. Full instructions are in **[WG-ONBOARDING.md](WG-ONBOARDING.md)**.
-4. Push to `main`. The site and PDF publish automatically to
-   `https://fg-tida-wg<n>.github.io/<repo-name>/`.
+## Contents
 
-## In this repository
+| | |
+|---|---|
+| 1–5 | Scope, References, Definitions, Abbreviations, Conventions |
+| 6 | Overview of trusted environment measurement and attestation |
+| 7 | Security risks (RSK-01 – RSK-10) |
+| 8 | Security requirements (REQ-AM / REQ-AS / REQ-VR / REQ-WS / REQ-TM / REQ-TD) |
+| 9 | Main procedures and methodologies (9.1–9.9) |
+| Appendix I | Use cases |
+| Appendix II | Reference environment measurement data model |
+| Bibliography, Annex A | References and the A.1 justification |
+| Gap analysis | The four gaps this work item addresses |
 
-- `src/doc/index.rst` — the document front matter (title, abstract, authors…).
-- `src/doc/chapters/` — the chapters; they explain and demonstrate how to write
-  content, then you replace them with your own.
-- `CONTRIBUTING.md` — how to contribute, and how to build, preview, and customise the document.
-- `WG-ONBOARDING.md` — the full step-by-step guide for authors.
+## Working on the document
 
-Built on the open-source [CUTEspecs](https://github.com/debora-com/CUTEspecs)
-template.
+The document is authored in reStructuredText and built with Sphinx into a web
+page and a print PDF.
+
+```shell
+pip install -r requirements.txt
+sphinx-build -b html src/doc target/html                            # web
+sphinx-build -b latex src/doc target/latex && make -C target/latex  # PDF
+```
+
+`target/` is a **local build directory only** — it is git-ignored and never
+published. The public site and PDF are built by GitHub Actions on every push to
+`main` and deployed to the addresses above.
+
+- `src/doc/index.rst` — title, abstract, background, summary, history, authors,
+  keywords, foreword, note.
+- `src/doc/chapters/` — one file per clause, `01`–`09`, then Appendix I–II, the
+  bibliography, the Annex A justification and the gap analysis.
+  `chapters/09_main-procedures/` is an `index.rst` plus one `_fragment.rst` per
+  procedure, pulled in with `.. include::`.
+- `src/doc/images/` — figures.
+- `src/doc/conf.py` — project metadata and the `cover_*` values used on the PDF cover.
+
+See **[CONTRIBUTING.md](CONTRIBUTING.md)** for how to propose a change, and
+**[WG-ONBOARDING.md](WG-ONBOARDING.md)** for the TIDA authoring workflow.
+
+## Editor
+
+Xiongwei Jia, China Unicom — jiaxw9@chinaunicom.cn
+
+## Licence
+
+MIT, per [LICENSE](LICENSE). See [CHANGELOG.md](CHANGELOG.md) for document history.

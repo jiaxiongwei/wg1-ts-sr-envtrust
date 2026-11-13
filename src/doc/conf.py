@@ -5,12 +5,12 @@ source_suffix = {'.rst': 'restructuredtext'}
 master_doc = 'index'
 exclude_patterns = []
 pygments_style = 'colorful'
-project = '<acronym>'
-release = '<version>'
-html_title = "<acronym>"
-author = '<author>'
+project = 'TS.sr-envtrust'
+release = 'V1 (draft)'
+html_title = "TS.sr-envtrust"
+author = 'FG-TIDA'
 
-numfig = True
+numfig = False
 
 # Pin the LaTeX/PDF output to a stable filename (specification.tex ->
 # specification.pdf) regardless of the project name, so the publish workflow
@@ -21,10 +21,10 @@ latex_documents = [
 
 # --- Cover metadata: single source of truth for index.rst (via substitutions)
 # and the LaTeX cover (via \newcommand interpolation below). Edit here.
-cover_title    = '<acronym>'
-cover_series   = '<series or category>'
-cover_subject  = '<subject line>'
-cover_subtitle = '<subtitle of this document>'
+cover_title    = 'TS.sr-envtrust'
+cover_series   = 'Technical Specification'
+cover_subject  = 'Security requirements for trusted environment measurement and attestation of AI agents'
+cover_subtitle = 'Draft'
 
 extensions = ['sphinxcontrib.httpdomain','sphinxcontrib.plantuml','sphinxcontrib.openapi', 'sphinx_copybutton']
 # PlantUML command. On CI (GitHub Actions / Read the Docs) the `plantuml` package
@@ -40,7 +40,7 @@ html_js_files = [
     "osia-sidebar.js",
 ]
 
-exclude_patterns = ['_*.rst', '*/_*.rst']
+exclude_patterns = ['_*.rst', '*/_*.rst', '**/_*.rst']
 
 rst_prolog = '''
 
@@ -109,10 +109,9 @@ html_theme_options = {
 }
 html_logo = "images/TIDA_logo.png"
 html_show_sourcelink = False
-copyright = '<year>, <author>'
+copyright = '2026, FG-TIDA'
 html_context = {'project':project, 'version':release, 'copyright': copyright}
 html_last_updated_fmt = '%b %d, %Y'
-html_extra_path = ['yaml']
 
 #
 # Latex/PDF Output Configuration
@@ -190,7 +189,7 @@ latex_elements = {
     \if@openright\cleardoublepage\else\clearpage\fi
   }%
   \title{Rec. ITU-T}%
-  \release{<acronym>}%
+  \release{'''+cover_title+r'''}%
 }
 
 %% Hide the next \chapter heading. Used to suppress the "Overview" chapter
@@ -306,7 +305,7 @@ latex_elements = {
       \node[anchor=north west, inner sep=0pt, text width=18cm]
         at ([xshift=1.5cm, yshift=-4.8cm]current page.north west)
         {\sffamily\hyphenpenalty=10000\exhyphenpenalty=10000\sloppy%
-         {\huge Recommendation}\\[0.4cm]
+         {\huge Technical Specification}\\[0.4cm]
          {\Huge\bfseries \coverTitle}\\[1.2cm]
          {\Large \coverSeries}\\[0.5cm]
          {\Large \coverSubject}};
@@ -351,11 +350,49 @@ latex_elements = {
 # `if 'DRAFT' in release` conditional that was here previously.
 # if 'DRAFT' in release:
 #     latex_elements['preamble'] += '\\SetWatermarkText{}'
+
+# Figure captions: sphinxmanual prints "Fig." and builds the space into
+# \fnum@figure, so set both the name and the separator -- after the class
+# has done so, hence \AtBeginDocument.
+latex_elements['preamble'] += r"""
+\makeatletter
+\AtBeginDocument{\renewcommand{\figurename}{Figure}%
+  \renewcommand{\fnum@figure}{\figurename\nobreakspace\thefigure}}
+\makeatother
+"""
 latex_elements['preamble'] += '\\SetWatermarkText{}'
 
 # Copy images
 import os,shutil,fnmatch
+import re as _re
+
+
+def _dedup_caption_labels(app, exception):
+    """Captions already carry their own numbers; drop LaTeX's duplicate label.
+
+    numfig is off and the prose cites captions by their document-wide number,
+    so the number lives in the caption text. LaTeX's \caption adds a label on
+    top and prints 'Table 1: Table 1 - ...'. Also reset the table counter:
+    uncaptioned list-tables (History, Authors, Abbreviations) step it, which
+    would push the first captioned table to 'Table 2'.
+    """
+    if app.builder.name != "latex" or exception is not None:
+        return
+    import pathlib as _pl
+    _sep = r"\\(?:textendash\{\}|sphinxhyphen\{\}) "
+    for tex in _pl.Path(app.outdir).glob("*.tex"):
+        text = tex.read_text(encoding="utf-8")
+        new = _re.sub(r"\\sphinxcaption\{Table \d+ " + _sep,
+                      r"\\sphinxcaption{", text)
+        new = _re.sub(r"\\caption\{Figure \d+ " + _sep, r"\\caption{", new)
+        new = _re.sub(r"\\sphinxcapstartof\{table\}",
+                      r"\\setcounter{table}{0}\\sphinxcapstartof{table}",
+                      new, count=1)
+        if new != text:
+            tex.write_text(new, encoding="utf-8")
+
 def setup(app):
+    app.connect("build-finished", _dedup_caption_labels)
     try:
         os.makedirs(app.outdir)
     except:
