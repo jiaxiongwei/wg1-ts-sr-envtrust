@@ -227,6 +227,21 @@ Note
 
 *[Editor: add any note on the status of this Technical Report.]*
 
+.. raw:: latex
+
+    %% Copyright notice commented out. To restore, uncomment the lines below.
+    %% \vspace{4em}
+    %% \begin{center}\textcopyright{} ITU 2026\end{center}
+    %%
+    %% \medskip
+    %% All rights reserved. No part of this publication may be reproduced, by any means whatsoever, without the
+    %% prior written permission of ITU.
+
+    %% Restore \addcontentsline so the TOC below (and Chapter 1 onward) populate.
+    \let\addcontentsline\osiaorigaddcontentsline
+    \sphinxtableofcontents
+    \osiamainmatter
+
 .. toctree::
     :maxdepth: 3
     :numbered:
